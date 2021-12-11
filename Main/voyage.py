@@ -59,7 +59,6 @@ def voyage(probability=GLOBAL_PROBABILITY, grid_size=GLOBAL_SMALL_MAZE_SIZE):
 
 
 def voyage_on_grid(probability, grid):
-    #  voyage(probability, len(grid))
     pass
 
 '''

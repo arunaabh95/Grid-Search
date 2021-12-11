@@ -7,7 +7,7 @@ from Entity.Grid import Grid
 from Main.Search import *
 from Main.voyage import get_default_states
 
-PROBABILITIES = [0.3]
+PROBABILITIES = [0.25, 0.3, 0.32, 0.34, 0.36, 0.38, 0.4, 0.42]
 pickle.HIGHEST_PROTOCOL = 4
 TEST_COUNT = GLOBAL_TEST_COUNT
 GRID_SIZE = GLOBAL_BIG_MAZE_SIZE
@@ -26,6 +26,7 @@ def initialize_test_variables(probability, field_of_view):
 # Initialize search class to run test on given set of probabilities and find all the metrics in q6
 def conduct_tests(field_of_view):
     data = pd.DataFrame()
+    i = 0
     for probability in PROBABILITIES:
         for test_index in range(TEST_COUNT):
             grid, start_state, goal_state, search = initialize_test_variables(probability, field_of_view)
@@ -34,7 +35,8 @@ def conduct_tests(field_of_view):
                 continue
             temp = preprocess(search.get_movement_data())
             print(temp.shape)
-            if test_index == 0:
+            if i == 0:
+                i += 1
                 data = temp
             else:
                 data = pd.concat([data, temp], axis=0)
@@ -45,17 +47,14 @@ def conduct_tests(field_of_view):
 def preprocess(data):
     i = 0
     while i < len(data):
-        g = Grid.make_grid(0, GLOBAL_BIG_MAZE_SIZE)
-        idxs = data[i][0]
-        g[idxs[0]][idxs[1]] = 1
-        data[i][0] = g
+        data[i][1][GLOBAL_BIG_MAZE_SIZE - 1][GLOBAL_BIG_MAZE_SIZE - 1] = 2
         data[i][2] = map_direction(data[i][2])
         i += 1
     return pd.DataFrame(data)
 
 
 def write_to_file(data):
-    data.to_hdf('../Data/train-3.h5', key='df', mode='a')
+    data.to_hdf('../Data/train-3.h5', key='df', mode='a', complevel=5)
 
 
 def map_direction(inp):
